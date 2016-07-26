@@ -20,9 +20,11 @@ The MarkLogicConnector.properties file should be modified for the Kinesis Stream
 
 ## Building the Connector
 
-To download required dependencies and build the project execute **ant build**
+1. Execute **ant setup**  this will download the Ivy dependency management jar and get the project ready
 
-When this completes the **build** directory should have been created containing **marklogic-kinesis.jar** and the following two sub-directories:
+2. Execute **ant build** to build the project (download dependencies, compile, package into jar)
+
+When this completes the **build** directory should have been created containing **marklogic-kinesis.jar** and two sub-directories:
 
 **config** directory containing **MarkLogic.properties** and **log4j.properties**
 
