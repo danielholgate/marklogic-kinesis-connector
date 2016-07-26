@@ -114,6 +114,11 @@
         	<attribute name="Class-Path" value="config/ ${jar.classpath}"/>
     	</manifest>
         </jar>
+         <!-- Remove class files -->
+    	<delete dir="${dir.build.classes}"/>
+    </target>
+	
+    <target name="build" depends="jar">
     	
     </target>
 
