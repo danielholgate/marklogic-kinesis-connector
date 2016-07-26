@@ -1,7 +1,7 @@
 # marklogic-kinesis-connector
 Connector from AWS Kinesis streams to MarkLogic database
 
-**marklogic-kinesis-connector** acts as a pipeline between an [Amazon Kinesis] stream and a [MarkLogic] database. Data can be sent from Kinesis directly to MarkLogic as XML, JSON, or free/unstructured text documents where it will be automatically indexed and available for use. The connector is written in Java and can run in AWS or locally to pull data from Kinesis.
+**marklogic-kinesis-connector** acts as a pipeline between an Amazon Kinesis stream and a MarkLogic database. Data can be sent from Kinesis directly to MarkLogic as XML, JSON, or free/unstructured text documents where it will be automatically indexed and available for use in applications for analysis and processing. The connector uses the MarkLogic Java Client and can run in AWS or locally to pull data from Kinesis.
 
 ## Requirements
 
@@ -21,21 +21,22 @@ The MarkLogicConnector.properties file should be modified for the Kinesis Stream
 ## Building the Connector
 
 To download required dependencies and build the project execute **ant build**
-The build directory should be created with the following structure:
 
-build
-├── marklogic-kinesis.jar
-├── config/
-│   ├── MarkLogic.properties
-│   ├── log4j.properties
-├── lib/ (dependecy jars)
+When this completes the **build** directory should have been created containing **marklogic-kinesis.jar** and the following two sub-directories:
+
+**config** directory containing **MarkLogic.properties** and **log4j.properties**
+
+**lib** directory containing dependency jars
 
 ## Running the Connector
 
 Set up your AWS credentials in ~/.aws/credentials
 
-Modify MarkLogicConnector.properties with the appropriate Kinesis stream details: **kinesisInputStream** and **regionName** and set the type of data which will be coming through the Kinesis stream in **kinesisInputStream.documenttype**
-For the MarkLogic database set the **marklogic.host** **marklogic.port** **marklogic.user** **marklogic.user.password**
+Modify **MarkLogicConnector.properties** with the appropriate Kinesis stream details: **kinesisInputStream** and **regionName** as well as setting the type of data which will be coming through the Kinesis stream in **kinesisInputStream.documenttype**
+
+For MarkLogic set the **marklogic.host**, **marklogic.port**, **marklogic.user** and **marklogic.user.password**
+
+Ensure the user has been created in MarkLogic and has rest-writer privileges to write to the MarkLogic REST api
 
 Run the connector with **java -jar marklogic-kinesis.jar**
 
