@@ -16,6 +16,7 @@ import com.marklogic.kinesis.transform.MarkLogicKinesisMessageModelTransformer;
 import org.apache.log4j.Logger;
 
 public class MarkLogicMessageModelPipeline
+<<<<<<< HEAD
 		implements IKinesisConnectorPipeline<KinesisMessageModel, MarkLogicMessageModel> {
 	private static final Logger LOG = Logger.getLogger(MarkLogicMessageModelPipeline.class.getName());
 
@@ -56,4 +57,55 @@ public class MarkLogicMessageModelPipeline
 	public IFilter<KinesisMessageModel> getFilter(KinesisConnectorConfiguration configuration) {
 		return new AllPassFilter();
 	}
+=======
+  implements IKinesisConnectorPipeline<KinesisMessageModel, MarkLogicMessageModel>
+{
+  private static final Logger LOG = Logger.getLogger(MarkLogicMessageModelPipeline.class.getName());
+  
+  public IEmitter<MarkLogicMessageModel> getEmitter(KinesisConnectorConfiguration configuration)
+  {
+    return new MarkLogicEmitter(configuration);
+  }
+  
+  public IBuffer<KinesisMessageModel> getBuffer(KinesisConnectorConfiguration configuration)
+  {
+    return new BasicMemoryBuffer(configuration);
+  }
+  
+  public ITransformer<KinesisMessageModel, MarkLogicMessageModel> getTransformer(KinesisConnectorConfiguration configuration)
+  {
+    String className = "com.marklogic.kinesis.transform.MarkLogicKinesisMessageModelTransformer";
+    ClassLoader classLoader = MarkLogicMessageModelPipeline.class.getClassLoader();
+    Class ModelClass = null;
+    ITransformer<KinesisMessageModel, MarkLogicMessageModel> ITransformerObject = null;
+    try
+    {
+      ModelClass = classLoader.loadClass(className);
+      ITransformerObject = (ITransformer)ModelClass.newInstance();
+      ((MarkLogicKinesisMessageModelTransformer)ITransformerObject).setStreamDocumentType(((KinesisConnectorForMarkLogicConfiguration)configuration).KINESIS_STREAM_DOC_TYPE);
+      ((MarkLogicKinesisMessageModelTransformer)ITransformerObject).setBaseURI(((KinesisConnectorForMarkLogicConfiguration)configuration).MARKLOGIC_INBOUND_BASE_URI);
+      
+      LOG.info("Using transformer: " + ITransformerObject.getClass().getName());
+      return ITransformerObject;
+    }
+    catch (ClassNotFoundException e)
+    {
+      LOG.error("Class not found: " + className + " error: " + e.getMessage());
+    }
+    catch (InstantiationException e)
+    {
+      LOG.error("Class not found: " + className + " error: " + e.getMessage());
+    }
+    catch (IllegalAccessException e)
+    {
+      LOG.error("Class not found: " + className + " error: " + e.getMessage());
+    }
+    return ITransformerObject;
+  }
+  
+  public IFilter<KinesisMessageModel> getFilter(KinesisConnectorConfiguration configuration)
+  {
+    return new AllPassFilter();
+  }
+>>>>>>> c7ff54cc6aec1edeb85949dcb106226e3f5f81d4
 }
