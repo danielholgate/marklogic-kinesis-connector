@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="marklogic-kinesis-connector" basedir="." default="resolve">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="marklogic-kinesis-connector" basedir="." default="build">
 
     <property name="version">1.2.3</property>
     <property name="dir.src">src/main/java</property>
@@ -17,17 +17,24 @@
 	<property name="ivy.home" value="${user.home}/.ant" />
 	<property name="ivy.jar.dir" value="${ivy.home}/lib" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	
+	<!-- PROPERTIES FOR TEST TASK SENDING DATA TO KINESIS STREAM. CHANGE AS NEEDED -->
+	<property name="kinesis.stream.name" value="MyKinesisStreamName" />
+	<property name="kinesis.stream.region" value="ap-southeast-2" /> <!-- AWS Regions are here: http://docs.aws.amazon.com/general/latest/gr/rande.html#ak_region -->
+	<property name="kinesis.test.documents.type" value="XML" /> <!-- XML, JSON or TEXT -->
+	<property name="kinesis.test.documents.number" value="10" /> <!-- Number of test data to send -->
 
-	 <target name="download-ivy" unless="offline">
-	 	<!--
+	<target name="check-ivy">
+	    <available file="${ivy.jar.file}" property="ivy.present"/>
+	</target>
+	
+	 <target name="download-ivy" depends="check-ivy" unless="ivy.present">
 	        <mkdir dir="${ivy.jar.dir}"/>
-	 	    <available file="${ivy.jar.file}" property="ivy.present"/>
 	 	    	<get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
-	 	    		             dest="${ivy.jar.file}" usetimestamp="true"/> 
-	 	    		          -->	
+	 	    		             dest="${ivy.jar.file}" usetimestamp="true"/>  	
 	    </target>
 
-	    <target name="init-ivy" depends="download-ivy">
+	    <target name="setup" depends="download-ivy">
 	        <path id="ivy.lib.path">
 	            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
 	        </path>
@@ -46,12 +53,41 @@
 
     <target name="clean">
         <delete dir="${dir.build}"/>
+    	<ivy:retrieve />
     </target>
+	
+	<target name="clean-all" depends="clean">
+	   <ivy:cleancache/>
+	</target>
 
-    <target name="init">
+    <target name="init" depends="clean,setup">
         <mkdir dir="${dir.build}"/>
         <mkdir dir="${dir.build.classes}"/>
     </target>
+	
+	<target name="test-send" depends="">
+		    <echo message="Sending test data to Kinesis stream"/>
+		    <java classname="com.marklogic.kinesis.test.SendDataToKinesis" fork="yes">
+		    	<classpath>
+		    	    <pathelement location="${dir.build}/${jar.filename}"/>
+		    	</classpath> 
+		    	<arg value="${kinesis.stream.name}"/>
+		    	<arg value="${kinesis.stream.region}"/>
+		    	<arg value="${kinesis.test.documents.type}"/>
+		    	<arg value="${kinesis.test.documents.number}"/>
+		   </java>
+	    </target>
+	
+	<target name="run" depends="copy-propertiesfile">
+		    <echo message="Running connector"/>
+		    <java classname="com.marklogic.kinesis.MarkLogicExecutor" fork="yes">
+		    	<classpath>
+		    	    <pathelement location="${dir.build}/${jar.filename}"/>
+		    		<pathelement location="${dir.build.config}/MarkLogicConnector.properties"/>
+		    		<pathelement location="${dir.build.config}/log4j.properties"/>
+		    	</classpath> 
+		   </java>
+	    </target>
 	
 	<target name="copy-dependencies">
 			<mkdir dir="${dir.build.lib}" />
@@ -116,7 +152,13 @@
         	<attribute name="Class-Path" value="config/ ${jar.classpath}"/>
     	</manifest>
         </jar>
+    	<!-- Remove class files -->
+    	<delete dir="${dir.build.classes}"/>
     	
+    </target>
+	
+    <target name="build" depends="jar">
+    	<!--<delete dir="${dir.build.classes}"/>-->
     </target>
 
     <target name="javadoc">
