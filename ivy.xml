@@ -16,10 +16,7 @@
 	<dependency org="junit"  name="junit" rev="4.10" conf="test->default"/>
 	<dependency org="com.marklogic" name="java-client-api" rev="3.0.5"/>
 	<dependency org="javax.ws.rs" name="javax.ws.rs-api" rev="2.0.1"/>
-<<<<<<< HEAD
 	<dependency org="org.glassfish.jersey.core" name="jersey-common" rev="2.12"/>
-=======
->>>>>>> c7ff54cc6aec1edeb85949dcb106226e3f5f81d4
 </dependencies>
 </ivy-module>
 

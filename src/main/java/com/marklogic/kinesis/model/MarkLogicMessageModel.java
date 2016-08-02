@@ -57,12 +57,9 @@ public class MarkLogicMessageModel
   {
     this.url = url;
   }
-<<<<<<< HEAD
   
   public String toString() {
 	  return "DocType: " + this.docType + " URL:" + this.url + " data:" + this.data.length + " bytes";
   }
   
-=======
->>>>>>> c7ff54cc6aec1edeb85949dcb106226e3f5f81d4
 }

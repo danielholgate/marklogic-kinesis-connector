@@ -44,7 +44,9 @@ Optional: Change **markLogic.inbound.collection** to the name of the collection 
 
 See **MarkLogicConnector.properties** for additional options (**markLogic.inbound.collection**, **marklogic.inbound.baseURI** etc)
 
-Run the connector with **java -jar marklogic-kinesis.jar** to start pulling data from Kinesis into MarkLogic.
+From ANT run the connector with: **ant run**
+
+From command line or script run the connector with: **java -jar marklogic-kinesis.jar**
 
 ## Related
 
