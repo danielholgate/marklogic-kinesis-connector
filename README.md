@@ -14,15 +14,16 @@ Connector from AWS Kinesis streams to MarkLogic database
 
 Incoming records from one (or many) shards of an AWS Kinesis Stream will be written to MarkLogic, into a collection if you choose. MarkLogic will ingest and automatically index the documents and make them available for immediate use in your applications.
 
-## Configuration
-
-The MarkLogicConnector.properties file should be modified for the Kinesis Stream(**kinesisInputStream**, **regionName**), destination MarkLogic database/cluster details (**marklogic.host**, **marklogic.port**, **marklogic.user**), App Name (**appName**)
-
 ## Building the Connector
 
-1. Execute **ant setup**  Downloads the Ivy dependency management jar and get the project ready
+cd to the project directory and:
 
-2. Execute **ant build** Builds the project (download dependencies, compile, package into jar)
+1. Execute **ant setup**  
+   Downloads the dependency management jar and gets the project ready
+
+2. Execute **ant build**
+    
+   Builds the project (download dependencies, compile, package into jar)
 
 When this completes the **build** directory should have been created containing **marklogic-kinesis.jar** and two sub-directories:
 
@@ -30,19 +31,29 @@ When this completes the **build** directory should have been created containing 
 
 **lib** directory containing dependency jars
 
+## Configuring the Connector
+
+1. Set up your AWS credentials in ~/.aws/credentials
+
+2. Modify build/[MarkLogicConnector.properties](./MarkLogicConnector.properties):
+ 
+**kinesisInputStream**   Name of the Kinesis stream
+
+ **regionName** The AWS region the stream is in
+
+ **kinesisInputStream.documenttype**  The type of data coming through the stream (JSON, XML, TEXT)
+
+ **marklogic.host**  MarkLogic database host
+
+ **marklogic.port**  MarkLogic application server host port
+
+ **marklogic.user**  MarkLogic database user (Ensure the user exists in MarkLogic and has rest-writer privileges to write REST API)
+
+ **marklogic.user.password**  User password
+
+See **MarkLogicConnector.properties** for additional options.
+
 ## Running the Connector
-
-Set up your AWS credentials in ~/.aws/credentials
-
-Modify **MarkLogicConnector.properties** with the appropriate Kinesis stream details: **kinesisInputStream** and **regionName** as well as setting the type of data which will be coming through the Kinesis stream in **kinesisInputStream.documenttype**
-
-Set **marklogic.host**, **marklogic.port**, **marklogic.user** and **marklogic.user.password** for the MarkLogic database.
-
-Optional: Change **markLogic.inbound.collection** to the name of the collection documents will be added to (default is fromKinesis)
-
-(Ensure the user exists in MarkLogic and has **rest-writer** privileges to write to the MarkLogic REST API)
-
-See **MarkLogicConnector.properties** for additional options (**markLogic.inbound.collection**, **marklogic.inbound.baseURI** etc)
 
 From ANT run the connector with: **ant run**
 
